@@ -2,9 +2,9 @@ const express = require('express');
 const { User, validateUser } = require('../models/User');
 const router = express.Router();
 
-router.post('/', async (req, res) => {
+const register = async (req, res) => {
   const { error } = validateUser(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
+  console.log('Request Body:', req.body);
 
   let user = await User.findOne({ email: req.body.email });
   if (user) return res.status(400).send('User already exists. Please sign in');
@@ -24,6 +24,6 @@ router.post('/', async (req, res) => {
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
-});
+};
 
-module.exports = router;
+module.exports = register;
