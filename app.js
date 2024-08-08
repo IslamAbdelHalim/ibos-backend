@@ -20,4 +20,5 @@ app.use(express.json());
 app.use('/', routes);
 
 // Run server
-app.listen(port, () => console.log(`Server Started on port ${port}`));
+app.listen(port, () => console.log(`Server Started on port ${port} http://localhost:${port}`));
+module.exports = app;
