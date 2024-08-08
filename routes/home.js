@@ -41,22 +41,13 @@ const goldMarket = async () =>{
  * @returns {Promise<string>} A JSON string representing the company's name, stock price, and currency.
  */
 const Market = async (symbol)=>{
-  var myHeaders = new Headers();
-  myHeaders={'X-Api-Key': 'KDlPtNi0ORK5he0Q8bqW3Q==wBGg31FiAV207HMK'}
   var requestOptions = {
     method: 'GET',
-    headers: myHeaders,
     redirect: 'follow'
   };
-
-  const response = await fetch(`https://api.api-ninjas.com/v1/stockprice?ticker=${symbol}`, requestOptions);
+  const response = await fetch(`https://fmpcloud.io/api/v3/stock-screener?symbol=${symbol}&marketCapMoreThan=1000000000&limit=3&apikey=56d3dea99c42729404922b7ed7c54b19`, requestOptions);
   const result = await response.json(); 
-  const aaplPrice = {
-    name: result.name,
-    price: result.price,
-    currency:"USD"}
-  console.log(`return: ${JSON.stringify(aaplPrice)}`);
-  return JSON.stringify(aaplPrice);
+  console.log(`return: ${JSON.stringify(result)}`);
 }
 
 
