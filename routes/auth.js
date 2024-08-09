@@ -4,7 +4,8 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const {User, validateRegister, personalInfoValidate, validateFinancialInfo, validateLoginUser} = require('../models/User');
-
+const dotenv = require('dotenv');
+dotenv.config();
 /**
  * @des Register new user
  * @route /register
@@ -29,7 +30,7 @@ router.post('/register', async (req, res) => {
     await newUser.save();
     const userId = newUser._id;
     //Generate Token
-    const token = jwt.sign({id: newUser._id, email: newUser.email}, process.env.SECRET_KEY, {expiresIn: "1d"});
+    const token = jwt.sign({id: newUser._id, email: newUser.email}, process.env.SECRET_KEY || "secret", {expiresIn: "1d"});
     res.status(201).json({ 
       token,
       userId,
@@ -50,10 +51,10 @@ router.post('/register', async (req, res) => {
 router.post('/register/personal-info', async (req, res) => {
   const { error } = personalInfoValidate(req.body);
   if(error) return res.status(400).json({message: error.details[0].message});
-
+  
   try {
+    const userId = req.body._id;
     console.log(req.body)
-    const userId = req.body.userId;
     console.log(userId)
     const birthdayString = `${req.body.year}-${req.body.month}-${req.body.day}`;
     await User.findByIdAndUpdate(userId, {
@@ -62,7 +63,8 @@ router.post('/register/personal-info', async (req, res) => {
       country: req.body.country,
       birthday: new Date(birthdayString)
     });
-    res.redirect('/financial-info');
+    res.status(201).json({ 
+      message: "User personal-info Updated successfully, please proceed to /register/personal-info/financial-info" });
 
   } catch (error) {
     console.log(error);
@@ -119,7 +121,7 @@ router.post('/login', async (req, res) => {
     if(!isPassCorrect)
       res.status(400).json({message: "Invalid email or password"});
 
-    const token = jwt.sign({id: user._id, email: user.email}, process.env.SECRET_KEY, {expiresIn: "1d"});
+    const token = jwt.sign({id: user._id, email: user.email}, process.env.SECRET_KEY || "secret", {expiresIn: "1d"});
     const {password, ...other} = user._doc;
     res.status(200).json({
       message: "Logging successfully",
