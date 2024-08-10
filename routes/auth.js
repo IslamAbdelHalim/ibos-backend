@@ -114,14 +114,16 @@ router.post('/login', async (req, res) => {
   try {
     // check if email is registered before
     const user = await User.findOne({username: req.body.username});
-    console.log(user);
+    
     if(!user) return res.status(404).json({message: "Invalid email or password"});
     // check if password is correct
     const isPassCorrect = await bcrypt.compare(req.body.password, user.password);
     if(!isPassCorrect)
-      res.status(400).json({message: "Invalid email or password"});
+      return res.status(400).json({message: "Invalid email or password"});
+    
+    console.log(user);
 
-    const token = jwt.sign({id: user._id, email: user.email}, process.env.SECRET_KEY || "secret", {expiresIn: "1d"});
+    const token =await  jwt.sign({id: user._id, email: user.email}, process.env.SECRET_KEY || "secret", {expiresIn: "1d"});
     const {password, ...other} = user._doc;
     res.status(200).json({
       message: "Logging successfully",
