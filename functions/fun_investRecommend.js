@@ -1,3 +1,5 @@
+
+
 const groupBySector = async (result) => {
   let groupedSector = {};
 
@@ -50,5 +52,10 @@ const setupMarket = async () => {
   const result = await response.json(); 
   return result;
 }
+
+
+
+
+
 
 module.exports = { groupBySector, market, setupMarket };
