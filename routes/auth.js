@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const {User, validateRegister, personalInfoValidate, validateFinancialInfo, validateLoginUser} = require('../models/User');
 const dotenv = require('dotenv');
+const { verifyToken } = require('../middlewares/verifyToken');
 dotenv.config();
 /**
  * @des Register new user
@@ -31,11 +32,11 @@ router.post('/register', async (req, res) => {
     const userId = newUser._id;
     //Generate Token
     const token = jwt.sign({id: newUser._id, email: newUser.email}, process.env.SECRET_KEY || "secret", {expiresIn: "1d"});
-    res.status(201).json({ 
+    res.cookie('token', token, {httpOnly: true});
+    res.status(201).json({
       token,
       userId,
       message: "User registered successfully, please proceed to /register/personal-info" });
-    // res.redirect('/personal-info');
   } catch (error) {
     console.log(error);
     res.status(500).json({message: 'Server Error......'});
@@ -48,22 +49,23 @@ router.post('/register', async (req, res) => {
  * @method POST
  * @access public
  */
-router.post('/register/personal-info', async (req, res) => {
+router.post('/register/personal-info',verifyToken ,async (req, res) => {
   const { error } = personalInfoValidate(req.body);
   if(error) return res.status(400).json({message: error.details[0].message});
   
   try {
-    const userId = req.body._id;
-    console.log(req.body)
+    const userId = req.user.id;
+    console.log(req.user)
     console.log(userId)
     const birthdayString = `${req.body.year}-${req.body.month}-${req.body.day}`;
-    await User.findByIdAndUpdate(userId, {
+    const userUpdate = await User.findByIdAndUpdate(userId, {
       fullName: req.body.fullName,
       gender: req.body.gender,
       country: req.body.country,
       birthday: new Date(birthdayString)
-    });
+    }, {new: true});
     res.status(201).json({ 
+      user: userUpdate,
       message: "User personal-info Updated successfully, please proceed to /register/personal-info/financial-info" });
 
   } catch (error) {
@@ -79,12 +81,12 @@ router.post('/register/personal-info', async (req, res) => {
  * @method POST
  * @access public
  */
-router.post('/register/personal-info/financial-info', async (req, res) => {
+router.post('/register/personal-info/financial-info', verifyToken, async (req, res) => {
   const { error } = validateFinancialInfo(req.body);
   if(error) return res.status(400).json({message: error.details[0].message});
 
   try {
-    const userId = req.body._id;
+    const userId = req.user.id;
     await User.findByIdAndUpdate(userId, {
       salary: req.body.salary,
       saving: req.body.saving,
@@ -125,6 +127,7 @@ router.post('/login', async (req, res) => {
 
     const token =await  jwt.sign({id: user._id, email: user.email}, process.env.SECRET_KEY || "secret", {expiresIn: "1d"});
     const {password, ...other} = user._doc;
+    res.cookie('token', token, {httpOnly: true});
     res.status(200).json({
       message: "Logging successfully",
       user: {...other},

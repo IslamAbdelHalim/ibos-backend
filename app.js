@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const routes = require('./routes/index');
+const cookieParser = require('cookie-parser');
 
 dotenv.config();
 
@@ -16,6 +17,7 @@ mongoose.connect(url)
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser()); // To use cookie to parse the token
 
 app.use('/', routes);
 

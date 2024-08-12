@@ -120,6 +120,23 @@ const validateLoginUser = (user) => {
   return schema.validate(user);
 }
 
+const validateUpdate = (user) => {
+  const schema = Joi.object({
+    username: Joi.string().min(3).max(10).trim(),
+    email: Joi.string().email(),
+    password: Joi.string(),
+    fullName: Joi.string().min(8).trim(),
+    gender: Joi.string().valid('male', 'female', 'other'),
+    country: Joi.string(),
+    day: Joi.number().integer().min(1).max(31),
+    month: Joi.number().integer().min(1).max(12),
+    year: Joi.number().integer().min(1900).max(new Date().getFullYear())
+  });
+
+  return schema.validate(user);
+}
+
+
 const User = mongoose.model('User', userSchema);
 
 module.exports = {
@@ -127,5 +144,6 @@ module.exports = {
   validateRegister,
   personalInfoValidate,
   validateFinancialInfo,
-  validateLoginUser
+  validateLoginUser,
+  validateUpdate
 };
