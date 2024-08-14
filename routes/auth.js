@@ -33,7 +33,7 @@ router.post('/register', async (req, res) => {
     //Generate Token
     const token = jwt.sign({id: newUser._id, email: newUser.email}, process.env.SECRET_KEY || "secret", {expiresIn: "1d"});
     res.cookie('token', token, {httpOnly: true, secure: true});
-    res.status(201).json({message: 'success'});
+    res.status(201).json({message: 'success',token: token});
   } catch (error) {
     console.log(error);
     res.status(500).json({message: 'Server Error......'});

@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const {User, validateRegister, personalInfoValidate, validateFinancialInfo, validateLoginUser} = require('../models/User');
 const { verifyToken } = require('../middlewares/verifyToken');
 
 const companys = ["AAPL", "AMZN", "META"];
@@ -119,13 +120,17 @@ router.get('/',verifyToken, async (req, res) => {
       const amzn = await Market("AMZN");
       const meta = await Market("META");
       //const goldhistory = await goldHistory();
-      const user = await User.findOne({_id: req.body.id});
+      const userId = req.user.id;
+      console.log(userId);
+      const user = await User.findById(userId);
+      if (!user) return res.status(404).json({ message: 'User not found' });
+      
       // Construct the response object
       const response = {
           0: {
               items: {
         //          gold,
-                  user,
+                  user: user.name,
                   aapl,
                   amzn,
                   meta
