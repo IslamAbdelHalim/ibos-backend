@@ -128,6 +128,7 @@ router.get('/',verifyToken, async (req, res) => {
       // Construct the response object
       const response = {
           0: {
+            name: user.fullName,
               items: {
         //          gold,
                   user: user.name,

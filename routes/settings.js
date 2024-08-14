@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const { User, validateUpdate } = require('../models/User');
 const router = express.Router();
 const { verifyToken } = require('../middlewares/verifyToken');
-
+const mongoose = require('mongoose');
 /**
  * @des setting user
  * @route /
@@ -13,10 +13,10 @@ const { verifyToken } = require('../middlewares/verifyToken');
  */
 router.get('/', verifyToken, async (req, res) => {
   try {
+    const userId = req.user.id;
+    console.log(userId);
     const user = await User.findById(userId);
-    console.log(user)
     if (!user) return res.status(404).json({ message: 'User not found' });
-    
     res.status(200).json(user);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -32,7 +32,7 @@ router.get('/', verifyToken, async (req, res) => {
 router.put('/update-info', verifyToken, async (req, res) => {
   const { error } = validateUpdate(req.body);
   if (error) return res.status(400).json({message: error.details[0].message});
-
+  console.log(req.user.id)
   if(req.body.password) {
     const salt = await bcrypt.genSalt(10);
     req.body.password = await bcrypt.hash(req.body.password, salt);
