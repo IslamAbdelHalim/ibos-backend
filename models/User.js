@@ -130,7 +130,13 @@ const validateUpdate = (user) => {
     country: Joi.string(),
     day: Joi.number().integer().min(1).max(31),
     month: Joi.number().integer().min(1).max(12),
-    year: Joi.number().integer().min(1900).max(new Date().getFullYear())
+    year: Joi.number().integer().min(1900).max(new Date().getFullYear()),
+    salary: Joi.number().min(0),
+    saving: Joi.number().min(0),
+    expenses: Joi.number().min(0),
+    investments: Joi.number().min(0),
+    debtsToPay: Joi.number().min(0),
+    debtsOwed: Joi.number().min(0)
   });
 
   return schema.validate(user);
