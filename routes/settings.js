@@ -48,4 +48,21 @@ router.put('/update-info', verifyToken, async (req, res) => {
 
 })
 
+/**
+ * @des update user
+ * @route /
+ * @method DELETE
+ * @access private
+ */
+router.put('/update-info', verifyToken, async (req, res) => {
+  const userId = req.user.id;
+  const user = await User.findById(userId).select('-password');
+  if(user) {
+    await User.findByIdAndDelete(userId);
+    res.status(200).json({message: "User Has been Deleted successfully"});
+  } else {
+    res.status(404).json({message: "User not Found"});
+  }
+})
+
 module.exports = router;
