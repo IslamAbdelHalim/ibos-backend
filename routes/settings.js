@@ -54,7 +54,7 @@ router.put('/update-info', verifyToken, async (req, res) => {
  * @method DELETE
  * @access private
  */
-router.put('/update-info', verifyToken, async (req, res) => {
+router.delete('/update-info', verifyToken, async (req, res) => {
   const userId = req.user.id;
   const user = await User.findById(userId).select('-password');
   if(user) {
