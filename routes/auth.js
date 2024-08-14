@@ -21,6 +21,7 @@ router.post('/register', async (req, res) => {
     // check if email is registered before
     const email = await User.findOne({email: req.body.email});
     if (email) return res.status(400).json({message: "This email is already registered"});
+    
 
     // make hashed password
     const salt = await bcrypt.genSalt(10);
@@ -126,7 +127,7 @@ router.post('/login', async (req, res) => {
     const {password, ...other} = user._doc;
     res.cookie('token', token, {httpOnly: true});
     res.status(200).json({
-      message: "success",
+      message: "success",token: token
     });
   
   } catch (error) {
