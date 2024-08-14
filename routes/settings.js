@@ -59,7 +59,7 @@ router.delete('/update-info', verifyToken, async (req, res) => {
   const user = await User.findById(userId).select('-password');
   if(user) {
     await User.findByIdAndDelete(userId);
-    res.status(204).json({message: "User Has been Deleted successfully"});
+    res.status(204);
   } else {
     res.status(404).json({message: "User not Found"});
   }

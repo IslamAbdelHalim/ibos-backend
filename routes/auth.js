@@ -30,7 +30,6 @@ router.post('/register', async (req, res) => {
     //create a new user
     const newUser = new User(req.body);
     await newUser.save();
-    const userId = newUser._id;
     //Generate Token
     const token = jwt.sign({id: newUser._id, email: newUser.email}, process.env.SECRET_KEY || "secret", {expiresIn: "1d"});
     res.cookie('token', token, {httpOnly: true, secure: true});
@@ -123,7 +122,7 @@ router.post('/login', async (req, res) => {
     
     console.log(user);
 
-    const token =await  jwt.sign({id: user._id, email: user.email}, process.env.SECRET_KEY || "secret", {expiresIn: "1d"});
+    const token = await  jwt.sign({id: user._id, email: user.email}, process.env.SECRET_KEY || "secret", {expiresIn: "1d"});
     const {password, ...other} = user._doc;
     res.cookie('token', token, {httpOnly: true});
     res.status(200).json({
