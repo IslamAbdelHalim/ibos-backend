@@ -21,7 +21,6 @@ router.post('/register', async (req, res) => {
     // check if email is registered before
     const email = await User.findOne({email: req.body.email});
     if (email) return res.status(400).json({message: "This email is already registered"});
-    
 
     // make hashed password
     const salt = await bcrypt.genSalt(10);
@@ -33,7 +32,7 @@ router.post('/register', async (req, res) => {
     //Generate Token
     const token = jwt.sign({id: newUser._id, email: newUser.email}, process.env.SECRET_KEY || "secret", {expiresIn: "1d"});
     res.cookie('token', token, {httpOnly: true, secure: true});
-    res.status(201).json({message: 'success',token: token});
+    res.status(201).json({message: 'success'});
   } catch (error) {
     console.log(error);
     res.status(500).json({message: 'Server Error......'});
@@ -126,7 +125,7 @@ router.post('/login', async (req, res) => {
     const {password, ...other} = user._doc;
     res.cookie('token', token, {httpOnly: true});
     res.status(200).json({
-      message: "success",token: token
+      message: "success",
     });
   
   } catch (error) {
