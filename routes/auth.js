@@ -33,10 +33,7 @@ router.post('/register', async (req, res) => {
     //Generate Token
     const token = jwt.sign({id: newUser._id, email: newUser.email}, process.env.SECRET_KEY || "secret", {expiresIn: "1d"});
     res.cookie('token', token, {httpOnly: true, secure: true});
-    res.status(201).json({
-      token,
-      userId,
-      message: "User registered successfully, please proceed to /register/personal-info" });
+    res.status(201).json({message: 'success'});
   } catch (error) {
     console.log(error);
     res.status(500).json({message: 'Server Error......'});
@@ -66,7 +63,7 @@ router.post('/register/personal-info',verifyToken ,async (req, res) => {
     }, {new: true});
     res.status(201).json({ 
       user: userUpdate,
-      message: "User personal-info Updated successfully, please proceed to /register/personal-info/financial-info" });
+      message: "success" });
 
   } catch (error) {
     console.log(error);
@@ -96,7 +93,7 @@ router.post('/register/personal-info/financial-info', verifyToken, async (req, r
       debtsOwed:req.body.debtsOwed,
     });
 
-    res.status(200).json({message: "User update"});
+    res.status(200).json({message: "success"});
   } catch(error) {
     console.log(error);
     res.status(500).json({message: "Server Error..."});
@@ -117,11 +114,11 @@ router.post('/login', async (req, res) => {
     // check if email is registered before
     const user = await User.findOne({username: req.body.username});
     
-    if(!user) return res.status(404).json({message: "Invalid email or password"});
+    if(!user) return res.status(404).json({message: "Invalid username or password"});
     // check if password is correct
     const isPassCorrect = await bcrypt.compare(req.body.password, user.password);
     if(!isPassCorrect)
-      return res.status(400).json({message: "Invalid email or password"});
+      return res.status(401).json({message: "Invalid username or password"});
     
     console.log(user);
 
@@ -129,9 +126,7 @@ router.post('/login', async (req, res) => {
     const {password, ...other} = user._doc;
     res.cookie('token', token, {httpOnly: true});
     res.status(200).json({
-      message: "Logging successfully",
-      user: {...other},
-      token
+      message: "success",
     });
   
   } catch (error) {
