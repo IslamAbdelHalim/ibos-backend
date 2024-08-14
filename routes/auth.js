@@ -19,8 +19,8 @@ router.post('/register', async (req, res) => {
 
   try {
     // check if email is registered before
-    const username = await User.findOne({username: req.body.username});
-    if (username) return res.status(400).json({message: "This username is already registered"});
+    const email = await User.findOne({email: req.body.email});
+    if (email) return res.status(400).json({message: "This email is already registered"});
 
     // make hashed password
     const salt = await bcrypt.genSalt(10);
