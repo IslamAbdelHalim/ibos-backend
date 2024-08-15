@@ -42,13 +42,13 @@ const market = async (marketSet, filters = [], pagenumber = 0) => {
 
 
 
-const setupMarket = async () => {
+const setupMarket = async (number=500) => {
   var requestOptions = {
     method: 'GET',
     redirect: 'follow'
   };
 
-  const response = await fetch(`https://fmpcloud.io/api/v3/stock-screener?marketCapMoreThan=1000000000&limit=500&apikey=56d3dea99c42729404922b7ed7c54b19`, requestOptions);
+  const response = await fetch(`https://fmpcloud.io/api/v3/stock-screener?marketCapMoreThan=1000000000&limit=${number}&apikey=56d3dea99c42729404922b7ed7c54b19`, requestOptions);
   const result = await response.json(); 
   return result;
 }
