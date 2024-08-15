@@ -8,6 +8,21 @@ const dotenv = require('dotenv');
 const { verifyToken } = require('../middlewares/verifyToken');
 dotenv.config();
 
+
+router.get('/verifyToken', async (req, res) => {
+  const token = req.cookies.token;
+  if (!token) {
+    return res.status(401).json({ message: 'Token not found' });
+  }
+
+  try {
+    const tokenUser = jwt.verify(token, process.env.SECRET_KEY || 'secret');
+    return res.status(200).json({ message: 'Token is valid', user: tokenUser });
+  } catch (err) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+});
+
 /**
  * @des Register new user
  * @route /register

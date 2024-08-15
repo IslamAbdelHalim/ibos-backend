@@ -7,6 +7,7 @@ const investRecommand = require('./invest_recommandetions')
 const ai_recommend = require('./Ai_recommendations')
 const more_investRecommand = require('./filteredInvestment-recommedations')
 const homeRouter = require('./home')
+const { verifyToken } = require('../middlewares/verifyToken');
 
 
 
