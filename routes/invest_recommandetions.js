@@ -6,16 +6,27 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     const marketSetup = await setupMarket();
-    const filters = await groupBySector(marketSetup)
-    const minMarket = await market(marketSetup)
-    
-    //console.log(minMarket)
-    res.status(200).json({filters, minMarket});
+    const filters = await groupBySector(marketSetup);
+    const minMarket = await market(marketSetup);
+
+    // Respond with success status, message, and the fetched data
+    res.status(200).json({
+      status: "success",
+      message: "Market data and filters fetched successfully",
+      data: {
+        filters,
+        minMarket
+      }
+    });
   } catch (error) {
     console.error('Error:', error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.status(500).json({
+      status: "error",
+      message: 'Internal Server Error'
+    });
   }
 });
+
 
 
 module.exports = router;

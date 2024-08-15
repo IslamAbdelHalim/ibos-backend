@@ -113,39 +113,40 @@ const Market = async (symbol) => {
   };
 };
 
-router.get('/',verifyToken, async (req, res) => {
-  try {
-      //const gold = await goldMarket();
-      const aapl = await Market("AAPL");
-      const amzn = await Market("AMZN");
-      const meta = await Market("META");
-      //const goldhistory = await goldHistory();
-      const userId = req.user.id;
-      console.log(userId);
-      const user = await User.findById(userId);
-      if (!user) return res.status(404).json({ message: 'User not found' });
-      
-      // Construct the response object
-      const response = {
-          0: {
-            name: user.fullName,
-              items: {
-        //          gold,
-                  user: user.name,
-                  aapl,
-                  amzn,
-                  meta
-              },
-          //    gold_history: goldhistory
-          }
-      };
 
-      res.json(response);
+router.get('/', verifyToken, async (req, res) => {
+  try {
+    //const gold = await goldMarket();
+    const aapl = await Market("AAPL");
+    const amzn = await Market("AMZN");
+    const meta = await Market("META");
+    //const goldhistory = await goldHistory();
+
+    const userId = req.user.id;
+    console.log(userId);
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ status: "error", message: 'User not found' });
+
+    // Construct the response object
+    const response = {
+      status: "success",
+      message: "Market data fetched successfully",
+      data: {
+        user: user.fullName,
+        items: {
+          aapl,
+          amzn,
+          meta
+        }
+        //    gold_history: goldhistory
+      }
+    };
+
+    res.status(200).json(response);
   } catch (error) {
-      console.error('Error fetching market data:', error);
-      res.status(500).json({ error: 'Failed to fetch market data' });
+    console.error('Error fetching market data:', error);
+    res.status(500).json({ status: "error", message: 'Failed to fetch market data' });
   }
 });
-
 
 module.exports = router;

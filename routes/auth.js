@@ -3,10 +3,11 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const {User, validateRegister, personalInfoValidate, validateFinancialInfo, validateLoginUser} = require('../models/User');
+const { User, validateRegister, personalInfoValidate, validateFinancialInfo, validateLoginUser } = require('../models/User');
 const dotenv = require('dotenv');
 const { verifyToken } = require('../middlewares/verifyToken');
 dotenv.config();
+
 /**
  * @des Register new user
  * @route /register
@@ -15,27 +16,28 @@ dotenv.config();
  */
 router.post('/register', async (req, res) => {
   const { error } = validateRegister(req.body);
-  if(error) return res.status(400).json({message: error.details[0].message});
+  if (error) return res.status(400).json({ status: "error", message: error.details[0].message });
 
   try {
-    // check if email is registered before
-    const email = await User.findOne({email: req.body.email});
-    if (email) return res.status(400).json({message: "This email is already registered"});
+    // Check if email is registered before
+    const email = await User.findOne({ email: req.body.email });
+    if (email) return res.status(400).json({ status: "error", message: "This email is already registered" });
 
-    // make hashed password
+    // Make hashed password
     const salt = await bcrypt.genSalt(10);
     req.body.password = await bcrypt.hash(req.body.password, salt);
 
-    //create a new user
+    // Create a new user
     const newUser = new User(req.body);
     await newUser.save();
-    //Generate Token
-    const token = jwt.sign({id: newUser._id, email: newUser.email}, process.env.SECRET_KEY || "secret", {expiresIn: "1d"});
-    res.cookie('token', token, {httpOnly: true, secure: true});
-    res.status(201).json({message: 'success'});
+
+    // Generate Token
+    const token = jwt.sign({ id: newUser._id, email: newUser.email }, process.env.SECRET_KEY || "secret", { expiresIn: "1d" });
+    res.cookie('token', token, { httpOnly: true, secure: true });
+    res.status(201).json({ status: "success", message: "User registered successfully", user: newUser, token });
   } catch (error) {
     console.log(error);
-    res.status(500).json({message: 'Server Error......'});
+    res.status(500).json({ status: "error", message: 'Server Error......' });
   }
 });
 
@@ -45,59 +47,52 @@ router.post('/register', async (req, res) => {
  * @method POST
  * @access public
  */
-router.post('/register/personal-info',verifyToken ,async (req, res) => {
+router.post('/register/personal-info', verifyToken, async (req, res) => {
   const { error } = personalInfoValidate(req.body);
-  if(error) return res.status(400).json({message: error.details[0].message});
-  
+  if (error) return res.status(400).json({ status: "error", message: error.details[0].message });
+
   try {
     const userId = req.user.id;
-    console.log(req.user)
-    console.log(userId)
     const birthdayString = `${req.body.year}-${req.body.month}-${req.body.day}`;
     const userUpdate = await User.findByIdAndUpdate(userId, {
       fullName: req.body.fullName,
       gender: req.body.gender,
       country: req.body.country,
       birthday: new Date(birthdayString)
-    }, {new: true});
-    res.status(201).json({ 
-      user: userUpdate,
-      message: "success" });
-
+    }, { new: true });
+    res.status(201).json({ status: "success", message: "Personal information updated successfully", user: userUpdate });
   } catch (error) {
     console.log(error);
-    res.status(500).json({message: 'Server Error......'});
+    res.status(500).json({ status: "error", message: 'Server Error......' });
   }
 });
 
-
 /**
- * @des take Financial information
- * @route /financial-info
+ * @des Take Financial information
+ * @route /register/personal-info/financial-info
  * @method POST
  * @access public
  */
 router.post('/register/personal-info/financial-info', verifyToken, async (req, res) => {
   const { error } = validateFinancialInfo(req.body);
-  if(error) return res.status(400).json({message: error.details[0].message});
+  if (error) return res.status(400).json({ status: "error", message: error.details[0].message });
 
   try {
     const userId = req.user.id;
-    await User.findByIdAndUpdate(userId, {
+    const userUpdate = await User.findByIdAndUpdate(userId, {
       salary: req.body.salary,
       saving: req.body.saving,
-      expenses:req.body.expenses,
-      investments:req.body.investments,
-      debtsToPay:req.body.debtsToPay,
-      debtsOwed:req.body.debtsOwed,
-    });
-
-    res.status(200).json({message: "success"});
-  } catch(error) {
+      expenses: req.body.expenses,
+      investments: req.body.investments,
+      debtsToPay: req.body.debtsToPay,
+      debtsOwed: req.body.debtsOwed,
+    }, { new: true });
+    res.status(200).json({ status: "success", message: "Financial information updated successfully", user: userUpdate });
+  } catch (error) {
     console.log(error);
-    res.status(500).json({message: "Server Error..."});
+    res.status(500).json({ status: "error", message: "Server Error..." });
   }
-})
+});
 
 /**
  * @des Login user
@@ -107,32 +102,25 @@ router.post('/register/personal-info/financial-info', verifyToken, async (req, r
  */
 router.post('/login', async (req, res) => {
   const { error } = validateLoginUser(req.body);
-  if(error) return res.status(400).json({message: error.details[0].message});
+  if (error) return res.status(400).json({ status: "error", message: error.details[0].message });
 
   try {
-    // check if email is registered before
-    const user = await User.findOne({username: req.body.username});
-    
-    if(!user) return res.status(404).json({message: "Invalid username or password"});
-    // check if password is correct
-    const isPassCorrect = await bcrypt.compare(req.body.password, user.password);
-    if(!isPassCorrect)
-      return res.status(401).json({message: "Invalid username or password"});
-    
-    console.log(user);
+    // Check if username is registered before
+    const user = await User.findOne({ username: req.body.username });
+    if (!user) return res.status(404).json({ status: "error", message: "Invalid username or password" });
 
-    const token = await  jwt.sign({id: user._id, email: user.email}, process.env.SECRET_KEY || "secret", {expiresIn: "1d"});
-    const {password, ...other} = user._doc;
-    res.cookie('token', token, {httpOnly: true});
-    res.status(200).json({
-      message: "success",
-    });
-  
+    // Check if password is correct
+    const isPassCorrect = await bcrypt.compare(req.body.password, user.password);
+    if (!isPassCorrect) return res.status(401).json({ status: "error", message: "Invalid username or password" });
+
+    const token = jwt.sign({ id: user._id, email: user.email }, process.env.SECRET_KEY || "secret", { expiresIn: "1d" });
+    const { password, ...other } = user._doc;
+    res.cookie('token', token, { httpOnly: true });
+    res.status(200).json({ status: "success", message: "Login successful", user: other, token });
   } catch (error) {
     console.log(error);
-    res.status(500).json({message: 'Server Error......'});
+    res.status(500).json({ status: "error", message: 'Server Error......' });
   }
-}); 
-
+});
 
 module.exports = router;

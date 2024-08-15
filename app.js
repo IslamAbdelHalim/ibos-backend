@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const routes = require('./routes/index');
 const cookieParser = require('cookie-parser');
+const cors = require('cors');
 
 dotenv.config();
 
@@ -14,12 +15,15 @@ mongoose.connect(url)
   .then(() => console.log(`Connected to Database: `))
   .catch(err => console.log('Error: Connection Failed', err));
 
-const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser()); // To use cookie to parse the token
+  const app = express();
 
-app.use('/', routes);
-
-// Run server
-app.listen(port, () => console.log(`Server Started on port ${port} http://localhost:${port}`));
+  app.use(cors());
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
+  app.use(cookieParser()); // To use cookie to parse the token
+  
+  app.use('/', routes);
+  
+  // Run server
+  app.listen(port, () => console.log(`Server Started on port ${port} http://localhost:${port}`));
+  
