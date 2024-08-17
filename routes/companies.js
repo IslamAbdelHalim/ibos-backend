@@ -27,6 +27,47 @@ router.post('/', verifyToken, async (req, res) => {
   }
 });
 
+router.put('/', verifyToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { symbol, _id, ...updatedData } = req.body;  // Exclude _id from the updated data
+
+    if (!symbol) {
+      return res.status(400).json({ status: "error", message: 'Symbol is required' });
+    }
+
+    const user = await User.findById(userId).select('-password');
+    if (!user) return res.status(404).json({ status: "error", message: 'User not found' });
+
+    const companyIndex = user.companies.findIndex(company => company.symbol === symbol);
+    if (companyIndex === -1) {
+      return res.status(404).json({ status: "error", message: 'Company not found' });
+    }
+
+    const updatedCompany = {
+      ...user.companies[companyIndex]._doc,
+      symbol,
+      ...updatedData
+    };
+    delete updatedCompany._id;
+
+    user.companies[companyIndex] = updatedCompany;
+    await user.save();
+
+    // Respond with success
+    res.status(200).json({
+      status: "success",
+      message: "Company updated successfully",
+      companies: user.companies
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ status: "error", message: 'Server error' });
+  }
+});
+
+
+
 
 router.get('/', verifyToken, async (req, res) => {
   try {

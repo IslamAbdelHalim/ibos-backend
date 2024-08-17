@@ -11,7 +11,17 @@ async function Ai(companys) {
   const response = await cohere.chat({
     message: `# Your name is 'IBOS'.
     # Your task is to analyze the financial stock data of companies that you will receive,
-    # analyze from the data don't care about company name or company symbol.
+    #Data to Consider:
+
+    Market Capitalization
+    Sector and Industry Trends
+    Beta (volatility)
+    Current Price and Price Trends
+    Last Annual Dividend
+    Trading Volume
+    Exchange Information
+    Country (if applicable)
+    Flags (like isEtf, isFund, isActivelyTrading, star, and dealDone)
     # and then recommend the top five companies to invest in 
     # if not possible recommend three instead of five
     # in not possible recommend one instead of three.
