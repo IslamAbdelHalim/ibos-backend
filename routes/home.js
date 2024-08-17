@@ -52,7 +52,7 @@ const formatDate = (date) => {
  * @returns {Promise<Object>} - An object representing the gold price and currency for that date.
  */
 const fetchGoldPriceForDate = async (date) => {
-  const url = `https://api.metalpriceapi.com/v1/${date}?api_key=3796f9c30ab58bf261c25cdef6df5a09&base=USD&currencies=XAU`;
+  const url = `https://api.metalpriceapi.com/v1/${date}?api_key=e99cf51312f5fdffc7142622600a8a54&base=USD&currencies=XAU`;
 
   const response = await fetch(url);
   const result = await response.json();
@@ -77,7 +77,7 @@ const goldHistory = async () => {
   const today = new Date();
   const promises = [];
 
-  for (let i = 1; i <= 15; i++) {
+  for (let i = 1; i <= 2; i++) {
       const date = new Date();
       date.setDate(today.getDate() - i);
       const formattedDate = formatDate(date);
@@ -108,19 +108,36 @@ const Market = async (symbol) => {
   // Assuming result is an array and the first element contains the needed data
   return {
       name: result[0].name || symbol,
-      price: result[0].price,
-      currency: "USD"
+      price: result[0].price
   };
 };
 
 
 router.get('/', verifyToken, async (req, res) => {
   try {
-    //const gold = await goldMarket();
+    //gold = await goldMarket();
     const aapl = await Market("AAPL");
     const amzn = await Market("AMZN");
     const meta = await Market("META");
-    //const goldhistory = await goldHistory();
+    //goldhistory = await goldHistory();
+    const goldhistory = [
+      { date: "2024-08-14", price: 2464.9374965799 },
+      { date: "2024-08-13", price: 2476.1037418137 },
+      { date: "2024-08-12", price: 2482.4658790035 },
+      { date: "2024-08-11", price: 2457.9845637423 },
+      { date: "2024-08-10", price: 2468.1347529384 },
+      { date: "2024-08-09", price: 2473.9456374921 },
+      { date: "2024-08-08", price: 2481.3752847389 },
+      { date: "2024-08-07", price: 2467.9238475639 },
+      { date: "2024-08-06", price: 2459.1847384923 },
+      { date: "2024-08-05", price: 2465.3927485962 },
+      { date: "2024-08-04", price: 2470.9384756293 },
+      { date: "2024-08-03", price: 2482.4375839457 },
+      { date: "2024-08-02", price: 2463.9382745629 },
+      { date: "2024-08-01", price: 2478.4927364923 },
+      { date: "2024-07-31", price: 2480.9483756384 },
+      { date: "2024-07-30", price: 2472.9374857923 }
+    ];
 
     const userId = req.user.id;
     console.log(userId);
@@ -135,10 +152,11 @@ router.get('/', verifyToken, async (req, res) => {
         user: user.fullName,
         items: {
           aapl,
+          aapl,
           amzn,
           meta
-        }
-        //    gold_history: goldhistory
+        },
+        gold_history: goldhistory
       }
     };
 
