@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Joi = require('joi');
+const joiPasswordComplexity = require('joi-password-complexity');
 
 
 const companySchema = new mongoose.Schema({
@@ -184,7 +185,7 @@ const validateRegister = (user) => {
   const schema = Joi.object({
     username: Joi.string().min(3).max(10).trim().required(),
     email: Joi.string().email().required(),
-    password: Joi.string().required()
+    password: joiPasswordComplexity().required()
   });
 
   return schema.validate(user);
@@ -232,7 +233,7 @@ const validateUpdate = (user) => {
   const schema = Joi.object({
     username: Joi.string().min(3).max(10).trim(),
     email: Joi.string().email(),
-    password: Joi.string(),
+    password: joiPasswordComplexity(),
     fullName: Joi.string().min(8).trim(),
     gender: Joi.string().valid('male', 'female', 'other'),
     country: Joi.string(),
@@ -250,6 +251,14 @@ const validateUpdate = (user) => {
   return schema.validate(user);
 }
 
+//validate rest password
+const validateRestPassword = (password) => {
+  const schema = Joi.object({
+    password: joiPasswordComplexity().required(),
+  })
+
+  return schema.validate(password);
+}
 
 const User = mongoose.model('User', userSchema);
 const Company = mongoose.model('Company', companySchema);
@@ -262,5 +271,6 @@ module.exports = {
   validateLoginUser,
   validateUpdate,
   validateCompany,
+  validateRestPassword,
   Company
 };

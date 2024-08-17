@@ -3,7 +3,8 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { User, validateRegister, personalInfoValidate, validateFinancialInfo, validateLoginUser } = require('../models/User');
+const nodemailer = require('nodemailer')
+const { User, validateRegister, personalInfoValidate, validateFinancialInfo, validateLoginUser, validateRestPassword} = require('../models/User');
 const dotenv = require('dotenv');
 const { verifyToken } = require('../middlewares/verifyToken');
 dotenv.config();
@@ -137,5 +138,86 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ status: "error", message: 'Server Error......' });
   }
 });
+
+/**
+ * @des sent rest-password link
+ * @route /forget-password
+ * @method POST
+ * @access public
+ */
+router.post('/forget-password', async(req, res) => {
+  const user = await User.findOne({email: req.body.email});
+  if (!user) {
+    return res.status(404).json({message: "failed"});
+  }
+
+  // create a secrete key for just rest password expired if password changes or after 10 min from sending the link
+  const secretKey = process.env.SECRET_KEY + user.password;
+  const token = await jwt.sign({email: user.email, id: user._id}, secretKey, { expiresIn: "10m" });
+
+  // create a rest link
+  const protocol = req.protocol;
+  const host = req.headers.host;
+  const link = `${protocol}://${host}/forget-password/${user._id}/${token}`;
+
+  res.status(200).json({message: "rest your password", link});
+
+  // // send link to email user
+  // const transporter = nodemailer.createTransport({
+  //   service: "gmail",
+  //   auth: {
+  //     user: process.env.USER_EMAIL,
+  //     pass: process.env.PASSEMAIL
+  //   }
+  // });
+  // const mailOptions = {
+  //   from: process.env.USER_EMAIL,
+  //   to: user.email,
+  //   subject: 'Rest Password',
+  //   html: `<div>
+  //           <h3>Click below to rest your password</h3>
+  //           <p>${link}</p>
+  //         </div>`
+  // }
+  // transporter.sendMail(mailOptions, (err, info) => {
+  //   if (err) {
+  //     console.log(err)
+  //   }
+  // });
+})
+
+/**
+ * @des rest password
+ * @route /forget-password/:userId/:token
+ * @method POST
+ * @access public
+ */
+router.post('/forget-password/:userId/:token', async(req, res) => {
+  const { error } = validateRestPassword(req.body);
+  if (error) return res.status(400).json({message: error.details[0].message});
+
+  const user = await User.findById(req.params.userId);
+  if (!user) return res.status(404).json({message: "failed"});
+
+  const secret = process.env.SECRET_KEY + user.password;
+  try{
+    jwt.verify(req.params.token, secret, (err, user) => {
+      if (err){
+        return res.status(401).json({message: "Token not verified"});
+      }
+    });
+
+    const salt = await bcrypt.genSalt(10);
+    req.body.password = await bcrypt.hash(req.body.password, salt);
+    user.password = req.body.password;
+
+    await user.save();
+
+    res.status(200).json({ status: "success", message: "password is rest" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({message: "Error..."});
+  }
+})
 
 module.exports = router;
