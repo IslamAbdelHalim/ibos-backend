@@ -2,14 +2,23 @@ const express = require('express');
 const { Ai } = require('../functions/Ai_recommendation');
 const { groupBySector, market, setupMarket } = require('../functions/fun_investRecommend');
 const router = express.Router();
+const { User, Company, validateCompany} = require('../models/User');
+const { verifyToken } = require('../middlewares/verifyToken');
 
-router.get('/', async (req, res) => {
+
+router.get('/', verifyToken, async (req, res) => {
   try {
-    // Setup the market with a limit of 20
-    const marketSetup = await setupMarket(20);
+    const userId = req.user.id;
+    const user = await User.findById(userId).select('companies -_id');
+    if (!user) {
+      return res.status(404).json({ status: "error", message: 'User not found' });
+    }
 
-    // Call the AI function with the market setup
-    const ai_response = await Ai(marketSetup);
+    const starredCompanies = user.companies.filter(company => company.star);
+    if (starredCompanies.length === 0) {
+      return res.status(404).json({ status: "error", message: 'No favorite companies were found.' });
+    }
+    const ai_response = await Ai(starredCompanies);
 
     // Return success response with AI data
     res.status(200).json({
