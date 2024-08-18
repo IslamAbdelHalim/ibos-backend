@@ -72,8 +72,13 @@ router.put('/', verifyToken, async (req, res) => {
 router.get('/', verifyToken, async (req, res) => {
   try {
     const userId = req.user.id;
-    const user = await User.findById(userId).select('-password');
+    const user = await User.findById(userId).select('companies -_id');
     if (!user) return res.status(404).json({ status: "error", message: 'User not found' });
+
+    const DealCompanies = user.companies.filter(company => company.dealDone);
+    if (DealCompanies.length === 0) {
+      return res.status(404).json({ status: "error", message: 'No deals were found.' });
+    }
 
     res.status(201).json({
       status: "success",
@@ -85,5 +90,6 @@ router.get('/', verifyToken, async (req, res) => {
     res.status(500).json({ status: "error", message: 'Server error' });
   }
 });
+
 
 module.exports = router;
