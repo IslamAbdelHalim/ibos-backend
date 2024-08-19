@@ -56,13 +56,13 @@ Here are some screenshots from the website:
 
 - Backend
 
-  - Node js <img src="https://www.vectorlogo.zone/logos/nodejs/nodejs-ar21.svg" alt="node" width="20" height="20"/>
-  - Express js <img src="https://www.vectorlogo.zone/logos/expressjs/expressjs-ar21.svg" alt="express" width="20" height="20"/>
+  - Node js <img src="https://www.vectorlogo.zone/logos/nodejs/nodejs-icon.svg" alt="node" width="20" height="20"/>
+  - Express js <img src="https://www.vectorlogo.zone/logos/expressjs/expressjs-icon.svg" alt="express" width="20" height="20"/>
 
 - Frontend
 
   - Tailwind CSS <img src="https://www.vectorlogo.zone/logos/tailwindcss/tailwindcss-icon.svg" alt="tailwind" width="20" height="20"/>
-  - React js <img src="https://www.vectorlogo.zone/logos/reactjs/reactjs-ar21.svg" alt="tailwind" width="20" height="20"/>
+  - React js <img src="https://www.vectorlogo.zone/logos/reactjs/reactjs-icon.svg" alt="tailwind" width="20" height="20"/>
 
 - Models
   - Cohere Ai <img src="https://asset.brandfetch.io/idfDTLvPCK/id3WZ2-eYm.png" alt="JavaScript" width="20" height="20"/>
