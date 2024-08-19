@@ -1,15 +1,12 @@
 ![MasterHead](<img src="/README/landing.png">)
 
 <h1 align="center">Welcome</h1>
-<h3 align="center">Catch line🔥</h3>
+<h3 align="center">TO IBOS 🔥!</h3>
 
 What is ibos ?
 
 IBOS is a project designed to develop a web application that helps individuals make well-informed investment decisions.
 
-## Table of contents
-
-- Here's the Table of Contents for your README:
 
 ## Table of Contents
 
