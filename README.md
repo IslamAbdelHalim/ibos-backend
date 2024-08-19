@@ -1,4 +1,4 @@
-![MasterHead](<img src="README/landing.png">)
+![MasterHead](<img src="/README/landing.png">)
 
 <h1 align="center">Welcome</h1>
 <h3 align="center">Catch line🔥</h3>
@@ -16,13 +16,13 @@ IBOS is a project designed to develop a web application that helps individuals m
 Here are some screenshots from the website:
 
 **Landing page**
-<img src="README/landing.png">
+<img src="/README/home.png">
 
 **Home page**
-<img src="README/home.png">
+<img src="/README/home.png">
 
 **Market page**
-<img src="README/market.png">
+<img src="/README/market.png">
 
 ## **Features**
 
