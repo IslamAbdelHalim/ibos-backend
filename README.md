@@ -9,14 +9,25 @@ IBOS is a project designed to develop a web application that helps individuals m
 
 ## Table of contents
 
-- [Name of section ex:Features](#link to section ex: #features)
+- Here's the Table of Contents for your README:
 
-## Screenshots (If you want to)
+## Table of Contents
+
+- [What is IBOS?](#what-is-ibos)
+- [Screenshots](#screenshots)
+- [Features](#features)
+- [Built With](#built-with)
+- [Our Site](#our-site)
+- [Contributing](#contributing)
+- [License](#license)
+- [Authors](#authors)
+
+## Screenshots
 
 Here are some screenshots from the website:
 
 **Landing page**
-<img src="/README/home.png">
+<img src="/README/landing.png">
 
 **Home page**
 <img src="/README/home.png">
