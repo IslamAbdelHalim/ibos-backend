@@ -1,4 +1,4 @@
-![MasterHead](<img src="readme/landing.png">)
+![MasterHead](<img src="README/landing.png">)
 
 <h1 align="center">Welcome</h1>
 <h3 align="center">Catch line🔥</h3>
@@ -16,13 +16,13 @@ IBOS is a project designed to develop a web application that helps individuals m
 Here are some screenshots from the website:
 
 **Landing page**
-<img src="readme/landing.png">
+<img src="README/landing.png">
 
 **Home page**
-<img src="readme/home.png">
+<img src="README/home.png">
 
 **Market page**
-<img src="readme/market.png">
+<img src="README/market.png">
 
 ## **Features**
 
@@ -45,7 +45,7 @@ Here are some screenshots from the website:
 
 - Js runtime
 
-  - Node js <img src="https://logowik.com/content/uploads/images/nodejs.jpg" alt="node" width="20" height="20"/>
+  - Node js <img src="https://www.vectorlogo.zone/logos/nodejs/nodejs-ar21.svg" alt="node" width="20" height="20"/>
 
 - Backend
   - Langchain framework 🦜🔗
