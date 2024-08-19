@@ -1,7 +1,7 @@
 ![MasterHead](<img src="/README/landing.png">)
 
 <h1 align="center">Welcome</h1>
-<h3 align="center">TO IBOS 🔥!</h3>
+<h3 align="center">IBOS!</h3>
 
 What is ibos ?
 
