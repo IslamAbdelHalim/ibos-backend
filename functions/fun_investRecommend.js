@@ -17,7 +17,7 @@ const groupBySector = async (result) => {
   return sectorNames;
 }
 
-const market = async (marketSet, filters = [], pagenumber = 0) => {
+const market = async (marketSet, filters = [], pagenumber = 0, budget = 0) => {
   const groupSize = 10;
 
   // Apply filters
@@ -29,6 +29,11 @@ const market = async (marketSet, filters = [], pagenumber = 0) => {
     });
   }
 
+  if (budget > 0) {
+    filteredResults = filteredResults.filter(item => {
+      return item.price <= budget;
+    });
+  }
 
   const startIndex = pagenumber * groupSize;
   const endIndex = startIndex + groupSize;

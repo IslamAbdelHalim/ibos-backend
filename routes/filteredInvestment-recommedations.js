@@ -6,12 +6,13 @@ const router = express.Router();
 router.post('/', async (req, res) => {
   try {
     const marketSetup = await setupMarket();
-    const minMarket = await market(marketSetup, req.body.filters, req.body.page);
+    const minMarket = await market(marketSetup, req.body.filters, req.body.page, req.body.budget);
 
     // Destructure filters and page
-    const { filters, page } = req.body; 
+    const { filters, page, budget } = req.body; 
     console.log('Filters:', filters);
     console.log('Page:', page);
+    console.log('budget:', budget);
 
     // Respond with success status, message, and the market data
     res.status(200).json({
