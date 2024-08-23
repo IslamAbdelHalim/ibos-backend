@@ -50,6 +50,37 @@ router.post('/register', async (req, res) => {
     // Generate Token
     const token = jwt.sign({ id: newUser._id, email: newUser.email }, process.env.SECRET_KEY || "secret", { expiresIn: "1d" });
     res.cookie('token', token, { httpOnly: true, secure: true });
+
+    // send confirmation mail
+    const protocol = req.protocol;
+    const host = req.headers.host;
+    const link = `${protocol}://${host}/register/personal-info`;
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.USER_EMAIL,
+        pass: process.env.APPPASSWORD
+      }
+    });
+
+    const mailOptions = {
+      from: process.env.USER_EMAIL,
+      to: newUser.email,
+      subject: 'Confirmation mail',
+      html: `<div>
+            <h3>Click below to rest your password</h3>
+            <p>${link}</p>
+          </div>`
+    }
+
+    transporter.sendMail(mailOptions, (err, info) => {
+      if (err) {
+        console.log(err)
+      }
+    });
+
+
     res.status(201).json({ status: "success", message: "User registered successfully", user: newUser, token });
   } catch (error) {
     console.log(error);
@@ -162,28 +193,28 @@ router.post('/forget-password', async(req, res) => {
 
   res.status(200).json({message: "rest your password", link});
 
-  // // send link to email user
-  // const transporter = nodemailer.createTransport({
-  //   service: "gmail",
-  //   auth: {
-  //     user: process.env.USER_EMAIL,
-  //     pass: process.env.PASSEMAIL
-  //   }
-  // });
-  // const mailOptions = {
-  //   from: process.env.USER_EMAIL,
-  //   to: user.email,
-  //   subject: 'Rest Password',
-  //   html: `<div>
-  //           <h3>Click below to rest your password</h3>
-  //           <p>${link}</p>
-  //         </div>`
-  // }
-  // transporter.sendMail(mailOptions, (err, info) => {
-  //   if (err) {
-  //     console.log(err)
-  //   }
-  // });
+  // send link to email user
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.USER_EMAIL,
+      pass: process.env.APPPASSWORD
+    }
+  });
+  const mailOptions = {
+    from: process.env.USER_EMAIL,
+    to: user.email,
+    subject: 'Rest Password',
+    html: `<div>
+            <h3>Click below to rest your password</h3>
+            <p>${link}</p>
+          </div>`
+  }
+  transporter.sendMail(mailOptions, (err, info) => {
+    if (err) {
+      console.log(err)
+    }
+  });
 })
 
 /**
