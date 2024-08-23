@@ -90,7 +90,6 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true,
     minlength: 3,
-    maxlength: 10,
     trim: true,
     unique: true
   },  email: {
@@ -183,7 +182,7 @@ const validateCompany = (company) => {
 // validate Register
 const validateRegister = (user) => {
   const schema = Joi.object({
-    username: Joi.string().min(3).max(10).trim().required(),
+    username: Joi.string().min(3).trim().required(),
     email: Joi.string().email().required(),
     password: joiPasswordComplexity().required()
   });
@@ -255,8 +254,7 @@ const validateUpdate = (user) => {
 const validateRestPassword = (password) => {
   const schema = Joi.object({
     password: joiPasswordComplexity().required(),
-  })
-
+  });
   return schema.validate(password);
 }
 
