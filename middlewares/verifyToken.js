@@ -3,13 +3,14 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const verifyToken = (req, res, next) => {
-  const token = req.cookies.token;
-  if (!token) {
+  const token = req.headers['authorization'].split(' ');
+  if (!token[0]) {
     return res.status(401).json({message: 'token not found'});
   }
 
   try {
-    const tokenUser = jwt.verify(token, process.env.SECRET_KEY || "secret");
+    console.log(token[1]);
+    const tokenUser = jwt.verify(token[1], process.env.SECRET_KEY || "secret");
     req.user = tokenUser;
     next();
   } catch(err) {
