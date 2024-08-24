@@ -11,16 +11,19 @@ dotenv.config();
 
 
 router.get('/verifyToken', async (req, res) => {
-  const token = req.cookies.token;
-  if (!token) {
-    return res.status(401).json({ message: 'Token not found' });
+  try {
+    let token = req.headers['authorization'].split(' ');
+  console.log(token);
+  if (!token[0]) {
+    return res.status(401).json({message: 'token not found'});
   }
 
-  try {
-    const tokenUser = jwt.verify(token, process.env.SECRET_KEY || 'secret');
+  
+    console.log(token[1]);
+    const tokenUser = jwt.verify(token[1], process.env.SECRET_KEY || "secret");
     return res.status(200).json({ message: 'Token is valid', user: tokenUser });
-  } catch (err) {
-    return res.status(401).json({ message: 'Unauthorized' });
+  } catch(err) {
+    return res.status(401).json({message: 'Unauthorized'});
   }
 });
 

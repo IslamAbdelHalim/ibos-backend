@@ -144,6 +144,8 @@ router.get('/', verifyToken, async (req, res) => {
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ status: "error", message: 'User not found' });
 
+    const DealCompanies = user.companies.filter(company => company.dealDone);
+
     // Construct the response object
     const response = {
       status: "success",
@@ -156,7 +158,8 @@ router.get('/', verifyToken, async (req, res) => {
           amzn,
           meta
         },
-        gold_history: goldhistory
+        gold_history: goldhistory,
+        DealCompanies: DealCompanies
       }
     };
 
