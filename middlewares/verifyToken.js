@@ -3,6 +3,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const verifyToken = (req, res, next) => {
+  // console.log(req.headers)
   const token = req.headers['authorization'].split(' ');
   if (!token[0]) {
     return res.status(401).json({message: 'token not found'});
